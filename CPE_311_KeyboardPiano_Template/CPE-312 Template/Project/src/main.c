@@ -12,11 +12,6 @@
 #include "stm32l1xx_ll_exti.h"
 #include "stdio.h"
 
-//00
-#define A_00 (uint16_t)27.500
-#define Bb_00 (uint16_t)29.135
-#define B_00 (uint16_t)30.868
-
 //01
 #define C_01 (uint16_t)32.703
 #define Db_01 (uint16_t)34.648
@@ -115,9 +110,6 @@
 #define Bb_07 (uint16_t)3729.3
 #define B_07 (uint16_t)3951.1
 
-//08
-#define C_08 (uint16_t)4186.0
-
 #define MUTE (uint16_t)20000
 
 #define Whole 1600
@@ -137,12 +129,13 @@
 #define ARR_CALCULATE(N) ((32000000) / ((TIMx_PSC) * (N)))
 
 void SystemClock_Config(void);
-void PA0_EXTI_Config(void);
+void initial_setting(void);
 void TIM_OC_Config(uint16_t note);
 void TIM_BASE_Config(uint16_t ARR);
 void TIM_OC_GPIO_Config(void);
 void PlayNote(uint16_t note, uint16_t duration);
-void TIM_BASE_DurationConfig(void);
+
+void TIM_count_config(void);
 
 char disp_str[5];
 
@@ -176,71 +169,260 @@ int note_03[][2]={
 int size_03=sizeof(note_03)/sizeof(note_03[0]);
 									
 int i=0;
-int a=0;
+int a=1;
+int b=1;
+//int c=0;
+int L=0;
+int R=0;
+int P=0;
+int T=0;
+									
+//int record[][2]={{C_04,Quarter}};
+int record[16]={0};
+	
+//int _note[]={_01,_02,_03,_04,_05,_06,_07};
+
+int C_note[]={C_01,C_02,C_03,C_04,C_05,C_06,C_07};
+int Db_note[]={Db_01,Db_02,Db_03,Db_04,Db_05,Db_06,Db_07};
+int D_note[]={D_01,D_02,D_03,D_04,D_05,D_06,D_07};
+int Eb_note[]={Eb_01,Eb_02,Eb_03,Eb_04,Eb_05,Eb_06,Eb_07};
+int E_note[]={E_01,E_02,E_03,E_04,E_05,E_06,E_07};
+int F_note[]={F_01,F_02,F_03,F_04,F_05,F_06,F_07};
+int Gb_note[]={Gb_01,Gb_02,Gb_03,Gb_04,Gb_05,Gb_06,Gb_07};
+int G_note[]={G_01,G_02,G_03,G_04,G_05,G_06,G_07};
+int Ab_note[]={Ab_01,Ab_02,Ab_03,Ab_04,Ab_05,Ab_06,Ab_07};
+int A_note[]={A_01,A_02,A_03,A_04,A_05,A_06,A_07};
+int Bb_note[]={Bb_01,Bb_02,Bb_03,Bb_04,Bb_05,Bb_06,Bb_07};
+int B_note[]={B_01,B_02,B_03,B_04,B_05,B_06,B_07};
 
 int main()
 {
 	SystemClock_Config();
-	PA0_EXTI_Config();
-	LCD_GLASS_Init();
+	initial_setting();
 
+	//LCD_GLASS_Init();
+	
+//	RCC->AHBENR |= (1<<0);
+//	GPIOA->MODER |= (1<<20) | (1<<18) | (1<<16);
+	
 	while(1);
 }
 
-void PA0_EXTI_Config(void)
+void initial_setting(void)
 {
+	//USER
+	//A0
 	LL_EXTI_InitTypeDef PA0_EXTI_InitStruct;
 	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
-	
 	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA,LL_SYSCFG_EXTI_LINE0);
 	PA0_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_0;
 	PA0_EXTI_InitStruct.LineCommand = ENABLE;
 	PA0_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
 	PA0_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING;
 	LL_EXTI_Init(&PA0_EXTI_InitStruct);
-	
 	NVIC_EnableIRQ((IRQn_Type)6);
 	NVIC_SetPriority((IRQn_Type)6,0);
+	
+	//NOTE
+	//A1
+	LL_EXTI_InitTypeDef PA1_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA,LL_SYSCFG_EXTI_LINE1);
+	PA1_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_1;
+	PA1_EXTI_InitStruct.LineCommand = ENABLE;
+	PA1_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PA1_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
+	LL_EXTI_Init(&PA1_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)7);
+	NVIC_SetPriority((IRQn_Type)7,0);
+
+	//A2
+	LL_EXTI_InitTypeDef PA2_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA,LL_SYSCFG_EXTI_LINE2);
+	PA2_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_2;
+	PA2_EXTI_InitStruct.LineCommand = ENABLE;
+	PA2_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PA2_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
+	LL_EXTI_Init(&PA2_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)8);
+	NVIC_SetPriority((IRQn_Type)8,0);
+	
+	//A3
+	LL_EXTI_InitTypeDef PA3_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA,LL_SYSCFG_EXTI_LINE3);
+	PA3_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_3;
+	PA3_EXTI_InitStruct.LineCommand = ENABLE;
+	PA3_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PA3_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
+	LL_EXTI_Init(&PA3_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)9);
+	NVIC_SetPriority((IRQn_Type)9,0);
+
+	//A4
+	LL_EXTI_InitTypeDef PA4_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA,LL_SYSCFG_EXTI_LINE4);
+	PA4_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_4;
+	PA4_EXTI_InitStruct.LineCommand = ENABLE;
+	PA4_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PA4_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
+	LL_EXTI_Init(&PA4_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)10);
+	NVIC_SetPriority((IRQn_Type)10,0);
+	
+	//A5
+	LL_EXTI_InitTypeDef PA5_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA,LL_SYSCFG_EXTI_LINE5);
+	PA5_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_5;
+	PA5_EXTI_InitStruct.LineCommand = ENABLE;
+	PA5_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PA5_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
+	LL_EXTI_Init(&PA5_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)23);
+	NVIC_SetPriority((IRQn_Type)23,0);
+	
+	//B10
+	LL_EXTI_InitTypeDef PB10_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB,LL_SYSCFG_EXTI_LINE10);
+	PB10_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_10;
+	PB10_EXTI_InitStruct.LineCommand = ENABLE;
+	PB10_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PB10_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
+	LL_EXTI_Init(&PB10_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)40);
+	NVIC_SetPriority((IRQn_Type)40,0);
+	
+	//B11
+	LL_EXTI_InitTypeDef PB11_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB,LL_SYSCFG_EXTI_LINE11);
+	PB11_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_11;
+	PB11_EXTI_InitStruct.LineCommand = ENABLE;
+	PB11_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PB11_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
+	LL_EXTI_Init(&PB11_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)40);
+	NVIC_SetPriority((IRQn_Type)40,0);
+	
+	//B12
+	LL_EXTI_InitTypeDef PB12_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB,LL_SYSCFG_EXTI_LINE12);
+	PB12_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_12;
+	PB12_EXTI_InitStruct.LineCommand = ENABLE;
+	PB12_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PB12_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
+	LL_EXTI_Init(&PB12_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)40);
+	NVIC_SetPriority((IRQn_Type)40,0);
+	
+	//B13
+	LL_EXTI_InitTypeDef PB13_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB,LL_SYSCFG_EXTI_LINE13);
+	PB13_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_13;
+	PB13_EXTI_InitStruct.LineCommand = ENABLE;
+	PB13_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PB13_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
+	LL_EXTI_Init(&PB13_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)40);
+	NVIC_SetPriority((IRQn_Type)40,0);
+	
+	//B14
+	LL_EXTI_InitTypeDef PB14_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB,LL_SYSCFG_EXTI_LINE14);
+	PB14_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_14;
+	PB14_EXTI_InitStruct.LineCommand = ENABLE;
+	PB14_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PB14_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
+	LL_EXTI_Init(&PB14_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)40);
+	NVIC_SetPriority((IRQn_Type)40,0);
+	
+	//B15
+	LL_EXTI_InitTypeDef PB15_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB,LL_SYSCFG_EXTI_LINE15);
+	PB15_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_15;
+	PB15_EXTI_InitStruct.LineCommand = ENABLE;
+	PB15_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PB15_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
+	LL_EXTI_Init(&PB14_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)40);
+	NVIC_SetPriority((IRQn_Type)40,0);
+	
+	//C6
+	LL_EXTI_InitTypeDef PC6_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTC,LL_SYSCFG_EXTI_LINE6);
+	PC6_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_6;
+	PC6_EXTI_InitStruct.LineCommand = ENABLE;
+	PC6_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PC6_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
+	LL_EXTI_Init(&PC6_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)23);
+	NVIC_SetPriority((IRQn_Type)23,0);
+	
+	//UP,DOWN
+	//C7
+	LL_EXTI_InitTypeDef PC7_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTC,LL_SYSCFG_EXTI_LINE7);
+	PC7_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_7;
+	PC7_EXTI_InitStruct.LineCommand = ENABLE;
+	PC7_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PC7_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING;	
+	LL_EXTI_Init(&PC7_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)23);
+	NVIC_SetPriority((IRQn_Type)23,0);
+	
+	//C8
+	LL_EXTI_InitTypeDef PC8_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTC,LL_SYSCFG_EXTI_LINE8);
+	PC8_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_8;
+	PC8_EXTI_InitStruct.LineCommand = ENABLE;
+	PC8_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PC8_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING;	
+	LL_EXTI_Init(&PC8_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)23);
+	NVIC_SetPriority((IRQn_Type)23,0);
+	
+	//RECORD
+	//C9
+	LL_EXTI_InitTypeDef PC9_EXTI_InitStruct;
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTC,LL_SYSCFG_EXTI_LINE9);
+	PC9_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_9;
+	PC9_EXTI_InitStruct.LineCommand = ENABLE;
+	PC9_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	PC9_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING;	
+	LL_EXTI_Init(&PC9_EXTI_InitStruct);
+	NVIC_EnableIRQ((IRQn_Type)23);
+	NVIC_SetPriority((IRQn_Type)23,0);
 }
 
 void EXTI0_IRQHandler(void)
 {
-	N1:
-		if(((EXTI->PR & (1<<0)) == 1) && a==0)
+ 	N1:
+		if(((EXTI->PR & (1<<0)) == 1) && a==1)
 		{
-			sprintf(disp_str, "%d", a);
-			LCD_GLASS_DisplayString((uint8_t*)disp_str);
+////			sprintf(disp_str, "%d", a);
+////			LCD_GLASS_DisplayString((uint8_t*)disp_str);
 			while(1)
 			{
-				for (int i = 0; i < size_01; ++i)
+				for (i = 0; i < size_01; ++i)
 				{
 					PlayNote(note_01[i][0],note_01[i][1]);
 					
-					if(((EXTI->PR & (1<<0)) == 1) && a==1)
-					{
-						EXTI->PR |= (1<<0);
-						goto N2;
-					}
-					
-					EXTI->PR |= (1<<0);
-					a=1;
-				}		
-			}
-		}
-	
-	N2:
-		if(((EXTI->PR & (1<<0)) == 1) && a==1)
-		{
-			while(1)
-			{
-				for (int i = 0; i < size_02; ++i)
-				{
-					PlayNote(note_02[i][0],note_02[i][1]);
-					
 					if(((EXTI->PR & (1<<0)) == 1) && a==2)
 					{
-						EXTI->PR |= (1<<0);
-						goto N3;
+						goto N2;
 					}
 					
 					EXTI->PR |= (1<<0);
@@ -249,20 +431,20 @@ void EXTI0_IRQHandler(void)
 			}
 		}
 	
-	N3:
+	N2:
+//		sprintf(disp_str, "%d", a);
+//		LCD_GLASS_DisplayString((uint8_t*)disp_str);
 		if(((EXTI->PR & (1<<0)) == 1) && a==2)
 		{
 			while(1)
 			{
-				for (int i = 0; i < size_03; ++i)
+				for (i = 0; i < size_02; ++i)
 				{
-					PlayNote(note_03[i][0],note_03[i][1]);
+					PlayNote(note_02[i][0],note_02[i][1]);
 					
 					if(((EXTI->PR & (1<<0)) == 1) && a==3)
 					{
-						EXTI->PR |= (1<<0);
-						a=0;
-						goto N1;
+						goto N3;
 					}
 					
 					EXTI->PR |= (1<<0);
@@ -270,9 +452,398 @@ void EXTI0_IRQHandler(void)
 				}		
 			}
 		}
+	
+	N3:
+//		sprintf(disp_str, "%d", a);
+//		LCD_GLASS_DisplayString((uint8_t*)disp_str);
+		if(((EXTI->PR & (1<<0)) == 1) && a==3)
+		{
+			while(1)
+			{
+				for (i = 0; i < size_03; ++i)
+				{
+					PlayNote(note_03[i][0],note_03[i][1]);
+					
+					if(((EXTI->PR & (1<<0)) == 1) && a==4)
+					{
+						goto N4;
+					}
+					
+					EXTI->PR |= (1<<0);
+					a=4;
+				}		
+			}
+		}
 		
-	sprintf(disp_str, "%d", a);
-	LCD_GLASS_DisplayString((uint8_t*)disp_str);
+	N4:
+		if(((EXTI->PR & (1<<0)) == 1) && a==4)
+		{
+			if(P==0)
+			{
+				a=1;
+				goto N1;
+			}
+			else
+			{
+				while(1)
+				{
+					for (i = 0 ; i < P ; ++i)
+					{
+						PlayNote(record[i],Half);
+						//TIM_OC_Config(ARR_CALCULATE(record[i]));
+						
+						if(((EXTI->PR & (1<<0)) == 1) && a==5)
+						{
+							a=1;
+							goto N1;
+						}
+						
+						EXTI->PR |= (1<<0);
+						a=5;
+					}		
+				}
+			}
+		}
+}
+
+void EXTI1_IRQHandler(void)
+{
+	//A1 C
+	if((EXTI->PR & (1<<1)) == (1<<1))
+	{
+		if(b==1)
+		{
+			b=0;
+			TIM_OC_Config(ARR_CALCULATE(C_note[L]));
+//			GPIOA->ODR |= (1<<10);
+//			GPIOA->ODR |= (1<<9);
+//			GPIOA->ODR |= (1<<8);
+	
+			if(R==1 & P<16)
+			{
+				record[P]=C_note[L];
+				P=P+1;
+				LL_mDelay(200);
+			}
+			
+			LL_mDelay(200);
+		}
+		else
+		{
+			b=1;
+			TIM_OC_Config(ARR_CALCULATE(MUTE));
+//			GPIOA->ODR &= ~(1<<10);
+//			GPIOA->ODR &= ~(1<<2);
+//			GPIOA->ODR &= ~(1<<3);
+			LL_mDelay(200);
+		}
+//		T=0;
+//		TIM_count_config();
+//		if(R==1)
+//		{
+//			record[P][0]=C_note[c+L];
+//			record[P][1]=T*800;
+//			P=P+1;
+//		}
+		EXTI->PR |= (1<<1);
+	}
+}
+
+void EXTI2_IRQHandler(void)
+{
+	//A2 Db
+	if((EXTI->PR & (1<<2)) == (1<<2))
+	{
+		if(b==1)
+		{
+			TIM_OC_Config(ARR_CALCULATE(Db_note[L]));
+			b=0;
+		}
+		else
+		{
+			TIM_OC_Config(ARR_CALCULATE(MUTE));
+			b=1;
+		}
+		
+		if(R==1)
+		{
+			record[P]=Db_note[L];
+			P=P+1;
+		}
+		EXTI->PR |= (1<<2);
+	}
+}
+
+void EXTI3_IRQHandler(void)
+{
+	//A3 D
+	if((EXTI->PR & (1<<3)) == (1<<3))
+	{
+		if(b==1)
+		{
+			TIM_OC_Config(ARR_CALCULATE(D_note[L]));
+			b=0;
+		}
+		else
+		{
+			TIM_OC_Config(ARR_CALCULATE(MUTE));
+			b=1;
+		}
+		
+		if(R==1)
+		{
+			record[P]=D_note[L];
+			P=P+1;
+		}
+		EXTI->PR |= (1<<3);
+	}
+}
+
+void EXTI4_IRQHandler(void)
+{
+	//A4 Eb
+	if((EXTI->PR & (1<<4)) == (1<<4))
+	{
+		if(b==1)
+		{
+			TIM_OC_Config(ARR_CALCULATE(Eb_note[L]));
+			b=0;
+		}
+		else
+		{
+			TIM_OC_Config(ARR_CALCULATE(MUTE));
+			b=1;
+		}
+
+		if(R==1)
+		{
+			record[P]=Eb_note[L];
+			P=P+1;
+		}
+		EXTI->PR |= (1<<4);
+	}
+}
+
+void EXTI9_5_IRQHandler(void)
+{
+	//A5 E
+	if((EXTI->PR & (1<<5)) == (1<<5))
+	{
+		if(b==1)
+		{
+			TIM_OC_Config(ARR_CALCULATE(E_note[L]));
+			b=0;
+		}
+		else
+		{
+			TIM_OC_Config(ARR_CALCULATE(MUTE));
+			b=1;
+		}
+
+		if(R==1)
+		{
+			record[P]=E_note[L];
+			P=P+1;
+		}
+		EXTI->PR |= (1<<5);
+	}
+	
+	//B6 B
+	if((EXTI->PR & (1<<6)) == (1<<6))
+	{
+		if(b==1)
+		{
+			TIM_OC_Config(ARR_CALCULATE(B_note[L]));
+			b=0;
+		}
+		else
+		{
+			TIM_OC_Config(ARR_CALCULATE(MUTE));
+			b=1;
+		}
+
+		if(R==1)
+		{
+			record[P]=B_note[L];
+			P=P+1;
+		}
+		EXTI->PR |= (1<<6);
+	}
+	
+	//B7 UP
+	if((EXTI->PR & (1<<7)) == (1<<7))
+	{
+		if(L < 8)
+		{
+			L=L+1;
+			LL_mDelay(200);
+		}
+		EXTI->PR |= (1<<7);
+	}
+	
+	//B8 DOWN
+	if((EXTI->PR & (1<<8)) == (1<<8))
+	{
+		if(L > 0)
+		{
+			
+			L=L-1;
+			LL_mDelay(200);
+		}
+		EXTI->PR |= (1<<8);
+	}
+	
+	//B9 RECORD
+	if((EXTI->PR & (1<<9)) == (1<<9))
+	{
+		if(R==0)
+		{
+			R=1;
+			P=0;
+			LL_mDelay(200);
+		}
+		else
+		{
+			R=0;
+			LL_mDelay(200);
+		}
+		EXTI->PR |= (1<<9);
+	}
+}
+
+void EXTI15_10_IRQHandler(void)
+{
+	//B10 F
+	if((EXTI->PR & (1<<10)) == (1<<10))
+	{
+		if(b==1)
+		{
+			TIM_OC_Config(ARR_CALCULATE(F_note[L]));
+			b=0;
+		}
+		else
+		{
+			TIM_OC_Config(ARR_CALCULATE(MUTE));
+			b=1;
+		}
+
+		if(R==1)
+		{
+			record[P]=F_note[L];
+			P=P+1;
+		}
+		EXTI->PR |= (1<<10);
+	}
+	
+	//B11 Gb
+	if((EXTI->PR & (1<<11)) == (1<<11))
+	{
+		if(b==1)
+		{
+			TIM_OC_Config(ARR_CALCULATE(Gb_note[L]));
+			b=0;
+		}
+		else
+		{
+			TIM_OC_Config(ARR_CALCULATE(MUTE));
+			b=1;
+		}
+
+		if(R==1)
+		{
+			record[P]=Gb_note[L];
+			P=P+1;
+		}
+		EXTI->PR |= (1<<11);
+	}
+	
+	//B12 G
+	if((EXTI->PR & (1<<12)) == (1<<12))
+	{
+		if(b==1)
+		{
+			TIM_OC_Config(ARR_CALCULATE(G_note[L]));
+			b=0;
+		}
+		else
+		{
+			TIM_OC_Config(ARR_CALCULATE(MUTE));
+			b=1;
+		}
+
+		if(R==1)
+		{
+			record[P]=G_note[L];
+			P=P+1;
+		}
+		EXTI->PR |= (1<<12);
+	}
+	
+	//B13 Ab
+	if((EXTI->PR & (1<<13)) == (1<<13))
+	{
+		if(b==1)
+		{
+			TIM_OC_Config(ARR_CALCULATE(Ab_note[L]));
+			b=0;
+		}
+		else
+		{
+			TIM_OC_Config(ARR_CALCULATE(MUTE));
+			b=1;
+		}
+
+		if(R==1)
+		{
+			record[P]=Ab_note[L];
+			P=P+1;
+		}
+		EXTI->PR |= (1<<13);
+	}
+	
+	//B14 A
+	if((EXTI->PR & (1<<14)) == (1<<14))
+	{
+		if(b==1)
+		{
+			TIM_OC_Config(ARR_CALCULATE(A_note[L]));
+			b=0;
+		}
+		else
+		{
+			TIM_OC_Config(ARR_CALCULATE(MUTE));
+			b=1;
+		}
+
+		if(R==1)
+		{
+			record[P]=A_note[L];
+			P=P+1;
+		}
+		EXTI->PR |= (1<<14);
+	}
+	
+	//B15 Bb
+	if((EXTI->PR & (1<<15)) == (1<<15))
+	{
+		if(b==1)
+		{
+			TIM_OC_Config(ARR_CALCULATE(Bb_note[L]));
+			b=0;
+		}
+		else
+		{
+			TIM_OC_Config(ARR_CALCULATE(MUTE));
+			b=1;
+		}
+
+		if(R==1)
+		{
+			record[P]=Bb_note[L];
+			P=P+1;
+		}
+		EXTI->PR |= (1<<15);
+	}
 }
 
 void TIM_BASE_Config(uint16_t ARR)
@@ -334,6 +905,43 @@ void TIM4_IRQHandler(void)
 		LL_TIM_ClearFlag_CC1(TIM4);
 	}
 }
+
+//void TIM_count_config(void)
+//{
+//	LL_TIM_InitTypeDef timbase_initstructure;
+//	
+//	// Enable TIM2 clock
+//	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
+//	
+//	timbase_initstructure.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
+//	timbase_initstructure.CounterMode = LL_TIM_COUNTERDIRECTION_UP;
+//	//(PSC+1)*(ARR+1) = 32,000,000*1
+//	//delay 1 sec
+//	timbase_initstructure.Autoreload = 4000 - 1;//ARR
+//	timbase_initstructure.Prescaler = 8000 - 1;//PSC
+
+//	LL_TIM_Init(TIM2, &timbase_initstructure);
+//	
+//	LL_TIM_EnableIT_UPDATE(TIM2);
+//	
+//	NVIC_SetPriority(TIM2_IRQn, 0);
+//	NVIC_EnableIRQ(TIM2_IRQn);
+//	
+//	LL_TIM_EnableCounter(TIM2);
+//}
+
+//void TIM2_IRQHandler(void)
+//{
+//	if(LL_TIM_IsActiveFlag_UPDATE(TIM2) == SET)
+//	{
+//		LL_TIM_ClearFlag_UPDATE(TIM2);
+//		T=0;
+//		if (T <= 1)
+//		{
+//				T = T+1;
+//		}
+//	}
+//}
 
 void PlayNote(uint16_t note, uint16_t duration)
 {

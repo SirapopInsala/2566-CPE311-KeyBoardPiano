@@ -1,0 +1,39 @@
+USER
+A0
+
+NOTE
+A1 C 'r g 10 12 /
+A2 Db 'g b 9 11 /
+A3 D 'b r 8 13 /
+A4 Eb 'rg b 109 11 /
+A5 E 'rb g 108 12 /
+B10 F 'gb r 98 13 /
+B11 Gb 'r gb 10 1211 /
+B12 G 'g rb 9 1311 /
+B13 Ab 'b rg 8 1312 /
+B14 A 'rg gb 109 1211 /
+B15 Bb 'gb rb 98 1311
+C7 B 'rb rg 108 1312 /
+
+UP,DOWN
+C8 
+
+RECORD
+C9 a1514 c10
+
+LED RGB
+1
+A10 A9 A8
+2
+A13 A12 A11
+3
+A15 A14 C10
+
+
+
+
+
+
+
+
+

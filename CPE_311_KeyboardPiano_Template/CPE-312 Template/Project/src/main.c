@@ -135,10 +135,6 @@ void TIM_BASE_Config(uint16_t ARR);
 void TIM_OC_GPIO_Config(void);
 void PlayNote(uint16_t note, uint16_t duration);
 
-void TIM_count_config(void);
-
-char disp_str[5];
-
 int note_01[][2]={
 									{F_05,Eighth},{Eb_05,Eighth},{Ab_05,Quarter},{Ab_05,Quarter},{Bb_05,Quarter},{Bb_05,Quarter},{C_06,Quarter},{Ab_05,Quarter},{Eb_05,Quarter},
 									{F_05,Eighth},{Eb_05,Eighth},{Ab_05,Quarter},{Ab_05,Quarter},{Bb_05,Quarter},{Bb_05,Quarter},{C_06,Quarter},{Ab_05,Quarter},{MUTE,Quarter},
@@ -169,18 +165,15 @@ int note_03[][2]={
 int size_03=sizeof(note_03)/sizeof(note_03[0]);
 									
 int i=0;
-int a=1;
+int a=0;
 int b=1;
-//int c=0;
-int L=0;
+int K=1;
+int L=4;
 int R=0;
 int P=0;
 int T=0;
 									
-//int record[][2]={{C_04,Quarter}};
 int record[16]={0};
-	
-//int _note[]={_01,_02,_03,_04,_05,_06,_07};
 
 int C_note[]={C_01,C_02,C_03,C_04,C_05,C_06,C_07};
 int Db_note[]={Db_01,Db_02,Db_03,Db_04,Db_05,Db_06,Db_07};
@@ -199,13 +192,53 @@ int main()
 {
 	SystemClock_Config();
 	initial_setting();
-
-	//LCD_GLASS_Init();
 	
-//	RCC->AHBENR |= (1<<0);
-//	GPIOA->MODER |= (1<<20) | (1<<18) | (1<<16);
-	
-	while(1);
+	//LED RGB
+	RCC->AHBENR |= (1<<0);
+	//1
+	//LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_10, LL_GPIO_MODE_OUTPUT);
+	GPIOA->MODER |= (1<<20) | (1<<18) | (1<<16); //PA10,9,8
+	//2
+	GPIOA->MODER |= (1<<26) | (1<<24) | (1<<22); //PA13,12,11
+	//3
+	GPIOA->MODER |= (1<<30) | (1<<28); //PA15,14
+	GPIOC->MODER |= (1<<20); //PC10
+		
+	while(1){
+//		if(L==0)
+//			{
+//				GPIOA->ODR |= (1<<13);
+//			}
+//		if(L==1)
+//			{
+//				GPIOA->ODR |= (1<<12);
+//			}
+//		if(L==2)
+//			{
+//				GPIOA->ODR |= (1<<11);
+//			}
+//		if(L==3)
+//			{
+//				GPIOA->ODR |= (1<<13);
+//				GPIOA->ODR |= (1<<12);
+//			}
+//		if(L==4)
+//			{
+//				GPIOA->ODR |= (1<<13);
+//				GPIOA->ODR |= (1<<11);
+//			}
+//		if(L==5)
+//			{
+//				GPIOA->ODR |= (1<<12);
+//				GPIOA->ODR |= (1<<11);
+//			}
+//		if(L==6)
+//			{
+//				GPIOA->ODR |= (1<<13);
+//				GPIOA->ODR |= (1<<12);
+//				GPIOA->ODR |= (1<<11);
+//			}
+		}
 }
 
 void initial_setting(void)
@@ -308,7 +341,7 @@ void initial_setting(void)
 	NVIC_EnableIRQ((IRQn_Type)40);
 	NVIC_SetPriority((IRQn_Type)40,0);
 	
-	//B12
+	//B12 
 	LL_EXTI_InitTypeDef PB12_EXTI_InitStruct;
 	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
 	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB,LL_SYSCFG_EXTI_LINE12);
@@ -352,23 +385,10 @@ void initial_setting(void)
 	PB15_EXTI_InitStruct.LineCommand = ENABLE;
 	PB15_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
 	PB15_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
-	LL_EXTI_Init(&PB14_EXTI_InitStruct);
+	LL_EXTI_Init(&PB15_EXTI_InitStruct);
 	NVIC_EnableIRQ((IRQn_Type)40);
 	NVIC_SetPriority((IRQn_Type)40,0);
 	
-	//C6
-	LL_EXTI_InitTypeDef PC6_EXTI_InitStruct;
-	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
-	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTC,LL_SYSCFG_EXTI_LINE6);
-	PC6_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_6;
-	PC6_EXTI_InitStruct.LineCommand = ENABLE;
-	PC6_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
-	PC6_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
-	LL_EXTI_Init(&PC6_EXTI_InitStruct);
-	NVIC_EnableIRQ((IRQn_Type)23);
-	NVIC_SetPriority((IRQn_Type)23,0);
-	
-	//UP,DOWN
 	//C7
 	LL_EXTI_InitTypeDef PC7_EXTI_InitStruct;
 	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
@@ -376,11 +396,12 @@ void initial_setting(void)
 	PC7_EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_7;
 	PC7_EXTI_InitStruct.LineCommand = ENABLE;
 	PC7_EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
-	PC7_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING;	
+	PC7_EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;	
 	LL_EXTI_Init(&PC7_EXTI_InitStruct);
 	NVIC_EnableIRQ((IRQn_Type)23);
 	NVIC_SetPriority((IRQn_Type)23,0);
-	
+
+	//UP,DOWN
 	//C8
 	LL_EXTI_InitTypeDef PC8_EXTI_InitStruct;
 	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
@@ -409,11 +430,38 @@ void initial_setting(void)
 
 void EXTI0_IRQHandler(void)
 {
+	rec:
+		if(((EXTI->PR & (1<<0)) == 1) && a==0)
+		{
+			if(P==0)
+			{
+				a=1;
+				EXTI->PR |= (1<<0);
+				goto N1;
+			}
+			else
+			{
+				while(1)
+				{
+					for (i = 0 ; i < P ; ++i)
+					{
+						PlayNote(record[i],Half);
+						
+						if(((EXTI->PR & (1<<0)) == 1) && a==1)
+						{
+							goto N1;
+						}
+						
+						EXTI->PR |= (1<<0);
+						a=1;
+					}		
+				}
+			}
+		}
+		
  	N1:
 		if(((EXTI->PR & (1<<0)) == 1) && a==1)
 		{
-////			sprintf(disp_str, "%d", a);
-////			LCD_GLASS_DisplayString((uint8_t*)disp_str);
 			while(1)
 			{
 				for (i = 0; i < size_01; ++i)
@@ -432,8 +480,6 @@ void EXTI0_IRQHandler(void)
 		}
 	
 	N2:
-//		sprintf(disp_str, "%d", a);
-//		LCD_GLASS_DisplayString((uint8_t*)disp_str);
 		if(((EXTI->PR & (1<<0)) == 1) && a==2)
 		{
 			while(1)
@@ -454,8 +500,6 @@ void EXTI0_IRQHandler(void)
 		}
 	
 	N3:
-//		sprintf(disp_str, "%d", a);
-//		LCD_GLASS_DisplayString((uint8_t*)disp_str);
 		if(((EXTI->PR & (1<<0)) == 1) && a==3)
 		{
 			while(1)
@@ -466,42 +510,13 @@ void EXTI0_IRQHandler(void)
 					
 					if(((EXTI->PR & (1<<0)) == 1) && a==4)
 					{
-						goto N4;
+						a=0;
+						goto rec;
 					}
 					
 					EXTI->PR |= (1<<0);
 					a=4;
 				}		
-			}
-		}
-		
-	N4:
-		if(((EXTI->PR & (1<<0)) == 1) && a==4)
-		{
-			if(P==0)
-			{
-				a=1;
-				goto N1;
-			}
-			else
-			{
-				while(1)
-				{
-					for (i = 0 ; i < P ; ++i)
-					{
-						PlayNote(record[i],Half);
-						//TIM_OC_Config(ARR_CALCULATE(record[i]));
-						
-						if(((EXTI->PR & (1<<0)) == 1) && a==5)
-						{
-							a=1;
-							goto N1;
-						}
-						
-						EXTI->PR |= (1<<0);
-						a=5;
-					}		
-				}
 			}
 		}
 }
@@ -513,38 +528,23 @@ void EXTI1_IRQHandler(void)
 	{
 		if(b==1)
 		{
-			b=0;
 			TIM_OC_Config(ARR_CALCULATE(C_note[L]));
-//			GPIOA->ODR |= (1<<10);
-//			GPIOA->ODR |= (1<<9);
-//			GPIOA->ODR |= (1<<8);
-	
-			if(R==1 & P<16)
+			b=0;			
+			GPIOA->ODR |= (1<<10);
+			GPIOA->ODR |= (1<<12);
+			if(R==1 && P<16)
 			{
 				record[P]=C_note[L];
 				P=P+1;
-				LL_mDelay(200);
 			}
-			
-			LL_mDelay(200);
 		}
 		else
 		{
-			b=1;
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
-//			GPIOA->ODR &= ~(1<<10);
-//			GPIOA->ODR &= ~(1<<2);
-//			GPIOA->ODR &= ~(1<<3);
-			LL_mDelay(200);
+			b=1;
+			GPIOA->ODR &= ~(1<<10);		
+			GPIOA->ODR &= ~(1<<12);
 		}
-//		T=0;
-//		TIM_count_config();
-//		if(R==1)
-//		{
-//			record[P][0]=C_note[c+L];
-//			record[P][1]=T*800;
-//			P=P+1;
-//		}
 		EXTI->PR |= (1<<1);
 	}
 }
@@ -558,17 +558,20 @@ void EXTI2_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(Db_note[L]));
 			b=0;
+			GPIOA->ODR |= (1<<9);
+			GPIOA->ODR |= (1<<11);
+			if(R==1 && P<16)
+			{
+				record[P]=Db_note[L];
+				P=P+1;
+			}
 		}
 		else
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-		}
-		
-		if(R==1)
-		{
-			record[P]=Db_note[L];
-			P=P+1;
+			GPIOA->ODR &= ~(1<<9);
+			GPIOA->ODR &= ~(1<<11);
 		}
 		EXTI->PR |= (1<<2);
 	}
@@ -583,17 +586,20 @@ void EXTI3_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(D_note[L]));
 			b=0;
+			GPIOA->ODR |= (1<<8);
+			GPIOA->ODR |= (1<<13);
+			if(R==1 && P<16)
+			{
+				record[P]=D_note[L];
+				P=P+1;
+			}
 		}
 		else
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-		}
-		
-		if(R==1)
-		{
-			record[P]=D_note[L];
-			P=P+1;
+			GPIOA->ODR &= ~(1<<8);
+			GPIOA->ODR &= ~(1<<13);
 		}
 		EXTI->PR |= (1<<3);
 	}
@@ -608,17 +614,22 @@ void EXTI4_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(Eb_note[L]));
 			b=0;
+			GPIOA->ODR |= (1<<10);
+			GPIOA->ODR |= (1<<9);
+			GPIOA->ODR |= (1<<11);
+			if(R==1 && P<16)
+			{
+				record[P]=Eb_note[L];
+				P=P+1;
+			}
 		}
 		else
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-		}
-
-		if(R==1)
-		{
-			record[P]=Eb_note[L];
-			P=P+1;
+			GPIOA->ODR &= ~(1<<10);
+			GPIOA->ODR &= ~(1<<9);
+			GPIOA->ODR &= ~(1<<11);
 		}
 		EXTI->PR |= (1<<4);
 	}
@@ -633,64 +644,77 @@ void EXTI9_5_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(E_note[L]));
 			b=0;
+			GPIOA->ODR |= (1<<10);
+			GPIOA->ODR |= (1<<8);
+			GPIOA->ODR |= (1<<12);
+			if(R==1 && P<16)
+			{
+				record[P]=E_note[L];
+				P=P+1;
+			}
 		}
 		else
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-		}
-
-		if(R==1)
-		{
-			record[P]=E_note[L];
-			P=P+1;
+			GPIOA->ODR &= ~(1<<10);
+			GPIOA->ODR &= ~(1<<8);
+			GPIOA->ODR &= ~(1<<12);
 		}
 		EXTI->PR |= (1<<5);
 	}
 	
-	//B6 B
-	if((EXTI->PR & (1<<6)) == (1<<6))
+	//B7 B
+	if((EXTI->PR & (1<<7)) == (1<<7))
 	{
 		if(b==1)
 		{
 			TIM_OC_Config(ARR_CALCULATE(B_note[L]));
 			b=0;
+			GPIOA->ODR |= (1<<10);
+			GPIOA->ODR |= (1<<8);			
+			GPIOA->ODR |= (1<<13);
+			GPIOA->ODR |= (1<<12);
+			if(R==1 && P<16)
+			{
+				record[P]=B_note[L];
+				P=P+1;
+			}
 		}
 		else
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-		}
-
-		if(R==1)
-		{
-			record[P]=B_note[L];
-			P=P+1;
-		}
-		EXTI->PR |= (1<<6);
-	}
-	
-	//B7 UP
-	if((EXTI->PR & (1<<7)) == (1<<7))
-	{
-		if(L < 8)
-		{
-			L=L+1;
-			LL_mDelay(200);
+			GPIOA->ODR &= ~(1<<10);
+			GPIOA->ODR &= ~(1<<8);			
+			GPIOA->ODR &= ~(1<<13);
+			GPIOA->ODR &= ~(1<<12);
 		}
 		EXTI->PR |= (1<<7);
 	}
 	
-	//B8 DOWN
+	//B8 UP DOWN
 	if((EXTI->PR & (1<<8)) == (1<<8))
-	{
-		if(L > 0)
+	{		
+		if(K==1)
 		{
-			
-			L=L-1;
+			L++;
 			LL_mDelay(200);
+			if(L==6)
+			{
+				K=0;
+			}
 		}
-		EXTI->PR |= (1<<8);
+		else
+		{
+			L--;
+			LL_mDelay(200);
+			if(L==0)
+			{
+				K=1;
+			}
+		}
+		EXTI->PR |= (1<<7);
 	}
 	
 	//B9 RECORD
@@ -698,12 +722,18 @@ void EXTI9_5_IRQHandler(void)
 	{
 		if(R==0)
 		{
+			GPIOA->ODR |= (1<<15);
+			GPIOA->ODR |= (1<<14);
+			GPIOC->ODR |= (1<<10);
 			R=1;
 			P=0;
 			LL_mDelay(200);
 		}
 		else
 		{
+			GPIOA->ODR &= ~(1<<15);
+			GPIOA->ODR &= ~(1<<14);
+			GPIOC->ODR &= ~(1<<10);
 			R=0;
 			LL_mDelay(200);
 		}
@@ -720,17 +750,22 @@ void EXTI15_10_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(F_note[L]));
 			b=0;
+			GPIOA->ODR |= (1<<9);
+			GPIOA->ODR |= (1<<8);
+			GPIOA->ODR |= (1<<13);
+			if(R==1 && P<16)
+			{
+				record[P]=F_note[L];
+				P=P+1;
+			}
 		}
 		else
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-		}
-
-		if(R==1)
-		{
-			record[P]=F_note[L];
-			P=P+1;
+			GPIOA->ODR &= ~(1<<9);
+			GPIOA->ODR &= ~(1<<8);
+			GPIOA->ODR &= ~(1<<13);
 		}
 		EXTI->PR |= (1<<10);
 	}
@@ -742,17 +777,22 @@ void EXTI15_10_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(Gb_note[L]));
 			b=0;
+			GPIOA->ODR |= (1<<10);
+			GPIOA->ODR |= (1<<12);
+			GPIOA->ODR |= (1<<11);
+			if(R==1 && P<16)
+			{
+				record[P]=Gb_note[L];
+				P=P+1;
+			}
 		}
 		else
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-		}
-
-		if(R==1)
-		{
-			record[P]=Gb_note[L];
-			P=P+1;
+			GPIOA->ODR &= ~(1<<10);
+			GPIOA->ODR &= ~(1<<12);
+			GPIOA->ODR &= ~(1<<11);
 		}
 		EXTI->PR |= (1<<11);
 	}
@@ -764,17 +804,22 @@ void EXTI15_10_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(G_note[L]));
 			b=0;
+			GPIOA->ODR |= (1<<9);
+			GPIOA->ODR |= (1<<13);
+			GPIOA->ODR |= (1<<11);
+			if(R==1 && P<16)
+			{
+				record[P]=G_note[L];
+				P=P+1;
+			}
 		}
 		else
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-		}
-
-		if(R==1)
-		{
-			record[P]=G_note[L];
-			P=P+1;
+			GPIOA->ODR &= ~(1<<9);
+			GPIOA->ODR &= ~(1<<13);
+			GPIOA->ODR &= ~(1<<11);
 		}
 		EXTI->PR |= (1<<12);
 	}
@@ -786,17 +831,22 @@ void EXTI15_10_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(Ab_note[L]));
 			b=0;
+			GPIOA->ODR |= (1<<8);
+			GPIOA->ODR |= (1<<13);
+			GPIOA->ODR |= (1<<12);
+			if(R==1 && P<16)
+			{
+				record[P]=Ab_note[L];
+				P=P+1;
+			}
 		}
 		else
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-		}
-
-		if(R==1)
-		{
-			record[P]=Ab_note[L];
-			P=P+1;
+			GPIOA->ODR &= ~(1<<8);
+			GPIOA->ODR &= ~(1<<13);
+			GPIOA->ODR &= ~(1<<12);
 		}
 		EXTI->PR |= (1<<13);
 	}
@@ -808,17 +858,24 @@ void EXTI15_10_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(A_note[L]));
 			b=0;
+			GPIOA->ODR |= (1<<10);
+			GPIOA->ODR |= (1<<9);
+			GPIOA->ODR |= (1<<12);
+			GPIOA->ODR |= (1<<11);
+			if(R==1 && P<16)
+			{
+				record[P]=A_note[L];
+				P=P+1;
+			}
 		}
 		else
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-		}
-
-		if(R==1)
-		{
-			record[P]=A_note[L];
-			P=P+1;
+			GPIOA->ODR &= ~(1<<10);
+			GPIOA->ODR &= ~(1<<9);
+			GPIOA->ODR &= ~(1<<12);
+			GPIOA->ODR &= ~(1<<11);
 		}
 		EXTI->PR |= (1<<14);
 	}
@@ -830,17 +887,24 @@ void EXTI15_10_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(Bb_note[L]));
 			b=0;
+			GPIOA->ODR |= (1<<9);
+			GPIOA->ODR |= (1<<8);
+			GPIOA->ODR |= (1<<13);
+			GPIOA->ODR |= (1<<11);
+			if(R==1 && P<16)
+			{
+				record[P]=Bb_note[L];
+				P=P+1;
+			}
 		}
 		else
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-		}
-
-		if(R==1)
-		{
-			record[P]=Bb_note[L];
-			P=P+1;
+			GPIOA->ODR &= ~(1<<9);
+			GPIOA->ODR &= ~(1<<8);
+			GPIOA->ODR &= ~(1<<13);
+			GPIOA->ODR &= ~(1<<11);
 		}
 		EXTI->PR |= (1<<15);
 	}
@@ -905,43 +969,6 @@ void TIM4_IRQHandler(void)
 		LL_TIM_ClearFlag_CC1(TIM4);
 	}
 }
-
-//void TIM_count_config(void)
-//{
-//	LL_TIM_InitTypeDef timbase_initstructure;
-//	
-//	// Enable TIM2 clock
-//	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
-//	
-//	timbase_initstructure.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
-//	timbase_initstructure.CounterMode = LL_TIM_COUNTERDIRECTION_UP;
-//	//(PSC+1)*(ARR+1) = 32,000,000*1
-//	//delay 1 sec
-//	timbase_initstructure.Autoreload = 4000 - 1;//ARR
-//	timbase_initstructure.Prescaler = 8000 - 1;//PSC
-
-//	LL_TIM_Init(TIM2, &timbase_initstructure);
-//	
-//	LL_TIM_EnableIT_UPDATE(TIM2);
-//	
-//	NVIC_SetPriority(TIM2_IRQn, 0);
-//	NVIC_EnableIRQ(TIM2_IRQn);
-//	
-//	LL_TIM_EnableCounter(TIM2);
-//}
-
-//void TIM2_IRQHandler(void)
-//{
-//	if(LL_TIM_IsActiveFlag_UPDATE(TIM2) == SET)
-//	{
-//		LL_TIM_ClearFlag_UPDATE(TIM2);
-//		T=0;
-//		if (T <= 1)
-//		{
-//				T = T+1;
-//		}
-//	}
-//}
 
 void PlayNote(uint16_t note, uint16_t duration)
 {

@@ -10,5 +10,5 @@ This project is used for STM32L152RB.
 ***KeyboardPiano Version 1.2 02/03/2024 8:30PM***
 -It requires 2 boards to be connected together and can now be displayed on the LCD.
 
-***KeyboardPiano Version 1.2 02/06/2024 12:20PM***
--Full Version, and fix RGB.
+***KeyboardPiano Version 1.3 02/06/2024 12:20PM***
+-Full Version

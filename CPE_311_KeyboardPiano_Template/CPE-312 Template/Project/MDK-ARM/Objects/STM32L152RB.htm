@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\STM32L152RB.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\STM32L152RB.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sat Feb 03 20:26:33 2024
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue Feb 06 12:05:34 2024
 <BR><P>
 <H3>Maximum Stack Usage =        144 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -460,7 +460,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l152xb.o(RESET)
 </UL>
-<P><STRONG><a name="[35]"></a>EXTI15_10_IRQHandler</STRONG> (Thumb, 1258 bytes, Stack size 8 bytes, main.o(i.EXTI15_10_IRQHandler))
+<P><STRONG><a name="[35]"></a>EXTI15_10_IRQHandler</STRONG> (Thumb, 1194 bytes, Stack size 8 bytes, main.o(i.EXTI15_10_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = EXTI15_10_IRQHandler &rArr; TIM_OC_Config &rArr; TIM_OC_GPIO_Config &rArr; LL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC_Config
@@ -488,14 +488,14 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l152xb.o(RESET)
 </UL>
-<P><STRONG><a name="[17]"></a>EXTI4_IRQHandler</STRONG> (Thumb, 194 bytes, Stack size 8 bytes, main.o(i.EXTI4_IRQHandler))
+<P><STRONG><a name="[17]"></a>EXTI4_IRQHandler</STRONG> (Thumb, 174 bytes, Stack size 8 bytes, main.o(i.EXTI4_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = EXTI4_IRQHandler &rArr; TIM_OC_Config &rArr; TIM_OC_GPIO_Config &rArr; LL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC_Config
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l152xb.o(RESET)
 </UL>
-<P><STRONG><a name="[24]"></a>EXTI9_5_IRQHandler</STRONG> (Thumb, 630 bytes, Stack size 8 bytes, main.o(i.EXTI9_5_IRQHandler))
+<P><STRONG><a name="[24]"></a>EXTI9_5_IRQHandler</STRONG> (Thumb, 594 bytes, Stack size 8 bytes, main.o(i.EXTI9_5_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = EXTI9_5_IRQHandler &rArr; TIM_OC_Config &rArr; TIM_OC_GPIO_Config &rArr; LL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LL_mDelay
@@ -630,7 +630,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[47]"></a>main</STRONG> (Thumb, 68 bytes, Stack size 0 bytes, main.o(i.main))
+<P><STRONG><a name="[47]"></a>main</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = main &rArr; initial_setting &rArr; LL_EXTI_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initial_setting

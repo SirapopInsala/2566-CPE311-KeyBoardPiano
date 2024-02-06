@@ -196,49 +196,10 @@ int main()
 	//LED RGB
 	RCC->AHBENR |= (1<<0);
 	//1
-	//LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_10, LL_GPIO_MODE_OUTPUT);
 	GPIOA->MODER |= (1<<20) | (1<<18) | (1<<16); //PA10,9,8
 	//2
 	GPIOA->MODER |= (1<<26) | (1<<24) | (1<<22); //PA13,12,11
-	//3
-	GPIOA->MODER |= (1<<30) | (1<<28); //PA15,14
-	GPIOC->MODER |= (1<<20); //PC10
-		
-	while(1){
-//		if(L==0)
-//			{
-//				GPIOA->ODR |= (1<<13);
-//			}
-//		if(L==1)
-//			{
-//				GPIOA->ODR |= (1<<12);
-//			}
-//		if(L==2)
-//			{
-//				GPIOA->ODR |= (1<<11);
-//			}
-//		if(L==3)
-//			{
-//				GPIOA->ODR |= (1<<13);
-//				GPIOA->ODR |= (1<<12);
-//			}
-//		if(L==4)
-//			{
-//				GPIOA->ODR |= (1<<13);
-//				GPIOA->ODR |= (1<<11);
-//			}
-//		if(L==5)
-//			{
-//				GPIOA->ODR |= (1<<12);
-//				GPIOA->ODR |= (1<<11);
-//			}
-//		if(L==6)
-//			{
-//				GPIOA->ODR |= (1<<13);
-//				GPIOA->ODR |= (1<<12);
-//				GPIOA->ODR |= (1<<11);
-//			}
-		}
+		while(1);
 }
 
 void initial_setting(void)
@@ -531,7 +492,7 @@ void EXTI1_IRQHandler(void)
 			TIM_OC_Config(ARR_CALCULATE(C_note[L]));
 			b=0;			
 			GPIOA->ODR |= (1<<10);
-			GPIOA->ODR |= (1<<12);
+			GPIOA->ODR |= (1<<11);
 			if(R==1 && P<16)
 			{
 				record[P]=C_note[L];
@@ -543,7 +504,7 @@ void EXTI1_IRQHandler(void)
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
 			GPIOA->ODR &= ~(1<<10);		
-			GPIOA->ODR &= ~(1<<12);
+			GPIOA->ODR &= ~(1<<11);
 		}
 		EXTI->PR |= (1<<1);
 	}
@@ -558,8 +519,8 @@ void EXTI2_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(Db_note[L]));
 			b=0;
-			GPIOA->ODR |= (1<<9);
-			GPIOA->ODR |= (1<<11);
+			GPIOA->ODR |= (1<<10);
+			GPIOA->ODR |= (1<<12);
 			if(R==1 && P<16)
 			{
 				record[P]=Db_note[L];
@@ -570,8 +531,8 @@ void EXTI2_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-			GPIOA->ODR &= ~(1<<9);
-			GPIOA->ODR &= ~(1<<11);
+			GPIOA->ODR &= ~(1<<10);
+			GPIOA->ODR &= ~(1<<12);
 		}
 		EXTI->PR |= (1<<2);
 	}
@@ -586,8 +547,8 @@ void EXTI3_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(D_note[L]));
 			b=0;
-			GPIOA->ODR |= (1<<8);
-			GPIOA->ODR |= (1<<13);
+			GPIOA->ODR |= (1<<9);
+			GPIOA->ODR |= (1<<11);
 			if(R==1 && P<16)
 			{
 				record[P]=D_note[L];
@@ -598,8 +559,8 @@ void EXTI3_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-			GPIOA->ODR &= ~(1<<8);
-			GPIOA->ODR &= ~(1<<13);
+			GPIOA->ODR &= ~(1<<9);
+			GPIOA->ODR &= ~(1<<11);
 		}
 		EXTI->PR |= (1<<3);
 	}
@@ -614,9 +575,8 @@ void EXTI4_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(Eb_note[L]));
 			b=0;
-			GPIOA->ODR |= (1<<10);
 			GPIOA->ODR |= (1<<9);
-			GPIOA->ODR |= (1<<11);
+			GPIOA->ODR |= (1<<12);
 			if(R==1 && P<16)
 			{
 				record[P]=Eb_note[L];
@@ -627,9 +587,8 @@ void EXTI4_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-			GPIOA->ODR &= ~(1<<10);
 			GPIOA->ODR &= ~(1<<9);
-			GPIOA->ODR &= ~(1<<11);
+			GPIOA->ODR &= ~(1<<12);
 		}
 		EXTI->PR |= (1<<4);
 	}
@@ -644,9 +603,8 @@ void EXTI9_5_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(E_note[L]));
 			b=0;
-			GPIOA->ODR |= (1<<10);
 			GPIOA->ODR |= (1<<8);
-			GPIOA->ODR |= (1<<12);
+			GPIOA->ODR |= (1<<11);
 			if(R==1 && P<16)
 			{
 				record[P]=E_note[L];
@@ -657,9 +615,8 @@ void EXTI9_5_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-			GPIOA->ODR &= ~(1<<10);
 			GPIOA->ODR &= ~(1<<8);
-			GPIOA->ODR &= ~(1<<12);
+			GPIOA->ODR &= ~(1<<11);
 		}
 		EXTI->PR |= (1<<5);
 	}
@@ -673,7 +630,6 @@ void EXTI9_5_IRQHandler(void)
 			b=0;
 			GPIOA->ODR |= (1<<10);
 			GPIOA->ODR |= (1<<8);			
-			GPIOA->ODR |= (1<<13);
 			GPIOA->ODR |= (1<<12);
 			if(R==1 && P<16)
 			{
@@ -686,8 +642,7 @@ void EXTI9_5_IRQHandler(void)
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
 			GPIOA->ODR &= ~(1<<10);
-			GPIOA->ODR &= ~(1<<8);			
-			GPIOA->ODR &= ~(1<<13);
+			GPIOA->ODR &= ~(1<<8);
 			GPIOA->ODR &= ~(1<<12);
 		}
 		EXTI->PR |= (1<<7);
@@ -699,7 +654,9 @@ void EXTI9_5_IRQHandler(void)
 		if(K==1)
 		{
 			L++;
+			GPIOA->ODR |= (1<<10);
 			LL_mDelay(200);
+			GPIOA->ODR &= ~(1<<10);
 			if(L==6)
 			{
 				K=0;
@@ -708,7 +665,9 @@ void EXTI9_5_IRQHandler(void)
 		else
 		{
 			L--;
+			GPIOA->ODR |= (1<<8);
 			LL_mDelay(200);
+			GPIOA->ODR &= ~(1<<8);
 			if(L==0)
 			{
 				K=1;
@@ -717,23 +676,19 @@ void EXTI9_5_IRQHandler(void)
 		EXTI->PR |= (1<<7);
 	}
 	
-	//B9 RECORD
+	//C9 RECORD
 	if((EXTI->PR & (1<<9)) == (1<<9))
 	{
 		if(R==0)
 		{
-			GPIOA->ODR |= (1<<15);
-			GPIOA->ODR |= (1<<14);
-			GPIOC->ODR |= (1<<10);
+			GPIOA->ODR |= (1<<9);
 			R=1;
 			P=0;
 			LL_mDelay(200);
+			GPIOA->ODR &= ~(1<<9);
 		}
 		else
 		{
-			GPIOA->ODR &= ~(1<<15);
-			GPIOA->ODR &= ~(1<<14);
-			GPIOC->ODR &= ~(1<<10);
 			R=0;
 			LL_mDelay(200);
 		}
@@ -750,9 +705,8 @@ void EXTI15_10_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(F_note[L]));
 			b=0;
-			GPIOA->ODR |= (1<<9);
 			GPIOA->ODR |= (1<<8);
-			GPIOA->ODR |= (1<<13);
+			GPIOA->ODR |= (1<<12);
 			if(R==1 && P<16)
 			{
 				record[P]=F_note[L];
@@ -763,9 +717,8 @@ void EXTI15_10_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-			GPIOA->ODR &= ~(1<<9);
 			GPIOA->ODR &= ~(1<<8);
-			GPIOA->ODR &= ~(1<<13);
+			GPIOA->ODR &= ~(1<<12);
 		}
 		EXTI->PR |= (1<<10);
 	}
@@ -778,7 +731,7 @@ void EXTI15_10_IRQHandler(void)
 			TIM_OC_Config(ARR_CALCULATE(Gb_note[L]));
 			b=0;
 			GPIOA->ODR |= (1<<10);
-			GPIOA->ODR |= (1<<12);
+			GPIOA->ODR |= (1<<9);
 			GPIOA->ODR |= (1<<11);
 			if(R==1 && P<16)
 			{
@@ -791,7 +744,7 @@ void EXTI15_10_IRQHandler(void)
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
 			GPIOA->ODR &= ~(1<<10);
-			GPIOA->ODR &= ~(1<<12);
+			GPIOA->ODR &= ~(1<<9);
 			GPIOA->ODR &= ~(1<<11);
 		}
 		EXTI->PR |= (1<<11);
@@ -804,9 +757,9 @@ void EXTI15_10_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(G_note[L]));
 			b=0;
+			GPIOA->ODR |= (1<<10);
 			GPIOA->ODR |= (1<<9);
-			GPIOA->ODR |= (1<<13);
-			GPIOA->ODR |= (1<<11);
+			GPIOA->ODR |= (1<<12);
 			if(R==1 && P<16)
 			{
 				record[P]=G_note[L];
@@ -817,9 +770,9 @@ void EXTI15_10_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
+			GPIOA->ODR &= ~(1<<10);
 			GPIOA->ODR &= ~(1<<9);
-			GPIOA->ODR &= ~(1<<13);
-			GPIOA->ODR &= ~(1<<11);
+			GPIOA->ODR &= ~(1<<12);
 		}
 		EXTI->PR |= (1<<12);
 	}
@@ -832,8 +785,8 @@ void EXTI15_10_IRQHandler(void)
 			TIM_OC_Config(ARR_CALCULATE(Ab_note[L]));
 			b=0;
 			GPIOA->ODR |= (1<<8);
-			GPIOA->ODR |= (1<<13);
-			GPIOA->ODR |= (1<<12);
+			GPIOA->ODR |= (1<<9);
+			GPIOA->ODR |= (1<<11);
 			if(R==1 && P<16)
 			{
 				record[P]=Ab_note[L];
@@ -845,8 +798,8 @@ void EXTI15_10_IRQHandler(void)
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
 			GPIOA->ODR &= ~(1<<8);
-			GPIOA->ODR &= ~(1<<13);
-			GPIOA->ODR &= ~(1<<12);
+			GPIOA->ODR &= ~(1<<9);
+			GPIOA->ODR &= ~(1<<11);
 		}
 		EXTI->PR |= (1<<13);
 	}
@@ -858,10 +811,9 @@ void EXTI15_10_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(A_note[L]));
 			b=0;
-			GPIOA->ODR |= (1<<10);
 			GPIOA->ODR |= (1<<9);
+			GPIOA->ODR |= (1<<8);
 			GPIOA->ODR |= (1<<12);
-			GPIOA->ODR |= (1<<11);
 			if(R==1 && P<16)
 			{
 				record[P]=A_note[L];
@@ -872,10 +824,9 @@ void EXTI15_10_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-			GPIOA->ODR &= ~(1<<10);
+			GPIOA->ODR &= ~(1<<8);
 			GPIOA->ODR &= ~(1<<9);
 			GPIOA->ODR &= ~(1<<12);
-			GPIOA->ODR &= ~(1<<11);
 		}
 		EXTI->PR |= (1<<14);
 	}
@@ -887,9 +838,8 @@ void EXTI15_10_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(Bb_note[L]));
 			b=0;
-			GPIOA->ODR |= (1<<9);
+			GPIOA->ODR |= (1<<10);
 			GPIOA->ODR |= (1<<8);
-			GPIOA->ODR |= (1<<13);
 			GPIOA->ODR |= (1<<11);
 			if(R==1 && P<16)
 			{
@@ -901,9 +851,8 @@ void EXTI15_10_IRQHandler(void)
 		{
 			TIM_OC_Config(ARR_CALCULATE(MUTE));
 			b=1;
-			GPIOA->ODR &= ~(1<<9);
+			GPIOA->ODR &= ~(1<<10);
 			GPIOA->ODR &= ~(1<<8);
-			GPIOA->ODR &= ~(1<<13);
 			GPIOA->ODR &= ~(1<<11);
 		}
 		EXTI->PR |= (1<<15);

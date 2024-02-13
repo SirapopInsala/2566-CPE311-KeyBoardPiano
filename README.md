@@ -11,4 +11,7 @@ This project is used for STM32L152RB.
 -It requires 2 boards to be connected together and can now be displayed on the LCD.
 
 ***KeyboardPiano Version 1.3 02/06/2024 12:20PM***
--Full Version
+Can play 3 songs and can play notes as recorded There will be an LCD that will appear as you play. For example, when playing song number 1, the LCD will show 1.
+-Press the note C Db D Eb E F Gb G Ab A Bb B and the color changes according to the note.
+-Press the high or low sound. When pressed, the light turns blue and it will be a low sound. is red is high When you press record, it will be green.
+-Can press record Note as desired.
